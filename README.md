@@ -167,8 +167,8 @@ fusion-rag
 Clone the repository
 
 ```
-git clone https://github.com/yourusername/fusion-rag.git
-cd fusion-rag
+git clone https://github.com/Sambit-Kumar-2001/FusionRAG
+cd FusionRAG
 ```
 
 Create virtual environment

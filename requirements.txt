@@ -1,0 +1,38 @@
+# Core RAG framework
+langchain
+langchain-community
+langchain-groq
+langchain_huggingface
+
+# Vector database
+faiss-cpu
+
+# Embeddings & reranking
+sentence-transformers
+transformers
+torch
+
+# Keyword retrieval
+rank-bm25
+
+# Document loading
+pypdf
+
+# Backend API
+fastapi
+uvicorn
+
+# UI
+streamlit
+
+# Data handling
+numpy
+pandas
+
+# Optional evaluation (future improvement)
+ragas
+datasets
+
+python-dotenv
+tqdm
+scikit-learn
