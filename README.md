@@ -2,9 +2,28 @@
 
 ### A Production-Style Hybrid Retrieval-Augmented Generation System
 
-FusionRAG is a production-inspired **Retrieval-Augmented Generation (RAG)** system that combines **semantic vector search and keyword retrieval (BM25)** with **cross-encoder reranking** to produce accurate answers grounded in source documents.
+⚠️ **Note**
 
-The goal of this project is to demonstrate how modern AI systems retrieve knowledge, rank relevant context, and generate reliable responses with **traceable citations**.
+This repository contains the **console-based research implementation** of FusionRAG that demonstrates the core **Hybrid Retrieval + Reranking pipeline**.
+
+A new **full production-grade application** with the following features is available in a separate repository:
+
+• Streamlit user interface
+• FastAPI backend service
+• Redis caching
+• Document upload support (PDF / TXT / MD)
+• Retrieval visualization
+• Suggested question generation
+• Reciprocal Rank Fusion (RRF) hybrid retrieval
+
+👉 **Production Application Repository**
+
+https://github.com/Sambit-Kumar-2001/FusionRAG-App
+
+The production version expands this system into a **complete end-to-end AI application**, while this repository focuses on the **core retrieval architecture and experimentation**.
+
+If you want to explore the **full interactive system**, please visit the production repository above.
+
 
 ---
 
@@ -196,39 +215,6 @@ Install dependencies
 ```
 pip install -r requirements.txt
 ```
-
----
-
-# Running the API
-
-Start the backend service
-
-```
-uvicorn api.main:app --reload
-```
-
-The API will be available at:
-
-```
-http://127.0.0.1:8000
-```
-
----
-
-# Running the UI
-
-Start the Streamlit interface
-
-```
-streamlit run ui/app.py
-```
-
-This interface allows users to:
-
-* Upload documents
-* Ask questions
-* View generated answers
-* Inspect cited sources
 
 ---
 
