@@ -11,8 +11,7 @@ A short demonstration of the FusionRAG console application showing:
 - cross-encoder reranking
 - grounded answer generation with citations
 
-![FusionRAG Demo](assets/fusionrag_demo.gif)
-
+![FusionRAG Demo](https://raw.githubusercontent.com/Sambit-Kumar-2001/FusionRAG/main/assets/fusionRAG_demo.gif)
 
 ⚠️ **Note**
 
