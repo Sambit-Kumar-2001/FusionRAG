@@ -9,6 +9,11 @@ from bm25_retriever import BM25Retriever
 from hybrid_retriever import HybridRetriever
 from reranker import rerank_documents
 from query_expander import expand_query
+from generator import generate_answer
+from dotenv import load_dotenv
+load_dotenv()
+os.environ["GROQ_API_KEY"]= os.getenv("groq_api-key")
+groq_api_key= os.getenv("groq_api-key")
 
 
 logging.basicConfig(level=logging.INFO)
@@ -100,11 +105,17 @@ async def main():
 
    
       reranked_docs = await rerank_documents(query, uniq_retrive_docs, top_k=5)
+      answer = generate_answer(
+         query,
+         reranked_docs,
+         groq_api_key,
+         model_name="llama-3.1-8b-instant"
+      )
 
-      for i, doc in enumerate(reranked_docs):
-
-            print(f"\n--- Reranked Result {i+1} ---\n")
-            print(doc.page_content[:300])
+      logger.info("\n==============================")
+      logger.info("ANSWER")
+      logger.info("==============================\n")
+      logger.info(answer)
     
    except Exception as e:
       logger.error(f"Pipeline failed: {str(e)}")
