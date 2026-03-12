@@ -2,6 +2,18 @@
 
 ### A Production-Style Hybrid Retrieval-Augmented Generation System
 
+# Demo
+
+A short demonstration of the FusionRAG console application showing:
+
+- document ingestion
+- hybrid retrieval (BM25 + vector search)
+- cross-encoder reranking
+- grounded answer generation with citations
+
+![FusionRAG Demo](assets/fusionrag_demo.gif)
+
+
 ⚠️ **Note**
 
 This repository contains the **console-based research implementation** of FusionRAG that demonstrates the core **Hybrid Retrieval + Reranking pipeline**.
