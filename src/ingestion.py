@@ -1,14 +1,22 @@
+import os
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from pathlib import Path
 import asyncio
 import logging
-from vector_store import create_vector_store
+from vector_store import get_vector_store
+from bm25_retriever import BM25Retriever
+from hybrid_retriever import HybridRetriever
+from reranker import rerank_documents
+from query_expander import expand_query
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 DATA_PATH= "data/documents"
+VECTOR_DB_PATH = "vector_store"
+
 
 async def load_document():
     """
@@ -17,13 +25,15 @@ async def load_document():
     """
     try:
       docs=[]
+      file_paths=[]
 
-      for file in Path(DATA_PATH).glob("**/*.pdf"):
+      for file in Path(DATA_PATH).glob("*.pdf"):
           loader= PyPDFLoader(str(file))
           docs.extend(loader.load())
-          return docs
-          
-        #   logger.info(f"Loaded documents: {len(docs)}")
+          file_paths.append(str(file))
+      
+      logger.info(f"Loaded {len(docs)} pages from {len(file_paths)} files")
+      return docs,file_paths
     
       
     
@@ -50,30 +60,50 @@ async def main():
    
    try:
       #load all the pdf docs
-      docs = await load_document()
-    #   logger.info(f"loadded documents:{len(docs)}")
+      docs,file_paths = await load_document()
 
       # Chuck all the loaded documents
       chunks= await slipt_documents(docs)
-    #   logger.info(f"Created {len(chunks)} Chunks")
-    #   logger.info("\nSample chunk:\n")
-    #   logger.info(chunks[0].page_content[:50])
+    
       
       # Embeding & store all the chunks in vector database 
-      vector_db = await create_vector_store(chunks)
+      vector_db = await get_vector_store(chunks,file_paths)
       logger.info("Vector DB ready")
+      
+      # create BM25 retriever
+      bm25 = BM25Retriever(chunks)
 
 
-      query = "How can satellite imagery detect agricultural fields?"
-      results = vector_db.similarity_search(query, k=3)
+      # create hybrid retriever
+      hybrid= HybridRetriever(vector_db,bm25)
 
-    #   logger.info("="*100,"Results Start", "="*100)
+      query = "agricultural field boundary detection"
 
-    #   logger.info(f"results:\n {results}")
-    #   logger.info("="*100,"Results End", "="*100)
+      #Expand query
+      expanded_queries = expand_query(query)
+      
+      all_expanded_queries=[]
 
-      for doc in results:
-            print("\n---- Result ----\n")
+      for q in expanded_queries:
+         quires=hybrid.search(q,k=10)
+         all_expanded_queries.extend(quires)
+      
+      #Remove duplicate chunks
+      uniq_retrive_docs=[]
+      seen=set()
+
+      for q in all_expanded_queries:
+         if q.page_content not in seen:
+            uniq_retrive_docs.append(q)
+            seen.add(q.page_content)
+      logger.info(f"Retrieved {len(uniq_retrive_docs)} unique documents")
+
+   
+      reranked_docs = await rerank_documents(query, uniq_retrive_docs, top_k=5)
+
+      for i, doc in enumerate(reranked_docs):
+
+            print(f"\n--- Reranked Result {i+1} ---\n")
             print(doc.page_content[:300])
     
    except Exception as e:
